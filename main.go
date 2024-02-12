@@ -6,6 +6,7 @@ import (
     "os"
     "strings"
     "sync"
+    "github.com/google/uuid"
 )
 var (
     auth = flag.String("a", "/auth", "")
@@ -19,7 +20,8 @@ func main() {
     flag.Parse()
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
         ip := strings.Split(r.RemoteAddr, ":")[0]
-        w.Write([]byte(ip + "\n"))
+        uuid := uuid.New().String()
+        w.Write([]byte("ID: " + uuid + "\n" + "IP: " + ip + "\n"))
         ipst.Lock()
         defer ipst.Unlock()
         _, ok := ipst.Load(ip)
