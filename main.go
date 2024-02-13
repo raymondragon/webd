@@ -20,8 +20,7 @@ func main() {
     flag.Parse()
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
         ip := strings.Split(r.RemoteAddr, ":")[0]
-        uuid := uuid.New().String()
-        w.Write([]byte("ID: " + uuid + "\n" + "IP: " + ip + "\n"))
+        w.Write([]byte("ID: " + uuid.New().String() + "\n" + "IP: " + ip + "\n"))
         ipst.Lock()
         defer ipst.Unlock()
         _, ok := ipst.Load(ip)
