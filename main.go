@@ -26,13 +26,10 @@ func main() {
         _, ok := ipst.Load(ip)
         if !ok {
             ipst.Store(ip, true)
-            ipfile("ip.list", ip)
+            file, _ := os.OpenFile("ip.list", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+            defer file.Close()
+            file.WriteString(ip + "\n")
         }
     })
     log.Fatal(http.ListenAndServe(*bind, nil))
-}
-func ipfile(filename string, ip string) {
-    file, _ := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-    defer file.Close()
-    file.WriteString(ip + "\n")
 }
