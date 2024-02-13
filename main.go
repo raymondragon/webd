@@ -18,12 +18,12 @@ func main() {
     flag.Parse()
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
         ip := strings.Split(r.RemoteAddr, ":")[0]
-        w.Write([]byte("ID: " + uuid.New().String() + "\n" + "IP: " + ip + "\n"))
+        w.Write([]byte("Protocol IP Address Detected: "+ip+"\nEventID: "+uuid.New().String()+"\n"))
         file, _ := os.OpenFile("IPlist", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
         defer file.Close()
-        file.WriteString(ip + "\n")
+        file.WriteString(ip+"\n")
     })
-    http.Handle(*cust + "/", &webdav.Handler{
+    http.Handle(*cust+"/", &webdav.Handler{
         FileSystem: webdav.Dir(*dirt),
         Prefix:     *cust,
         LockSystem: webdav.NewMemLS(),
