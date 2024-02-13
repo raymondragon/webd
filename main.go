@@ -19,7 +19,6 @@ func main() {
         file, _ := os.OpenFile("ip.list", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
         defer file.Close()
         file.WriteString(ip + "\n")
-        }
     })
     log.Fatal(http.ListenAndServe(*bind, nil))
 }
