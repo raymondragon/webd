@@ -4,8 +4,6 @@ import (
     "log"
     "net/http"
     "os"
-    "strings"
-    "github.com/google/uuid"
     "golang.org/x/net/webdav"
 )
 var (
