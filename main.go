@@ -12,10 +12,9 @@ var (
 )
 func main() {
     flag.Parse()
-    webd := &webdav.Handler{
+    log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
         FileSystem: webdav.Dir(*dirt),
         Prefix:     *cust,
         LockSystem: webdav.NewMemLS(),
-    }
-    log.Fatal(http.ListenAndServe(*bind, webd))
+    }))
 }
