@@ -16,17 +16,17 @@ var (
 func main() {
     flag.Parse()
     if *tar == "" {
-        log.Fatal("Target Service Required")
+        log.Fatal("[ERR-0] Target Service Required")
     }
     listener, err := net.Listen("tcp", *bin)
     if err != nil {
-        log.Fatal("Error listening: ", err)
+        log.Fatal("[ERR-1] ", err)
     }
     defer listener.Close()
     for {
         clientConn, err := listener.Accept()
         if err != nil {
-            log.Println("Error accepting: ", err)
+            log.Println("[ERR-2] ", err)
             continue
         }
         go handleClient(clientConn)
@@ -36,12 +36,12 @@ func handleClient(clientConn net.Conn) {
     defer clientConn.Close()
     clientIP := clientConn.RemoteAddr().(*net.TCPAddr).IP.String()
     if !isIPInList(clientIP, *ips) {
-        log.Printf("Client %s not in IPlist, closing connection.\n", clientIP)
+        log.Println("[ERR-3] ", clientIP)
         return
     }
     serverConn, err := net.Dial("tcp", *tar)
     if err != nil {
-        log.Println("Error connecting to server: ", err)
+        log.Println("[ERR-4] ", err)
         return
     }
     defer serverConn.Close()
@@ -51,7 +51,7 @@ func handleClient(clientConn net.Conn) {
 func isIPInList(ip string, iplist string) bool {
     file, err := os.Open(iplist)
     if err != nil {
-        log.Println("Error opening IPlist: ", err)
+        log.Println("[ERR-5] ", err)
         return false
     }
     defer file.Close()
@@ -62,7 +62,7 @@ func isIPInList(ip string, iplist string) bool {
         }
     }
     if err := scanner.Err(); err != nil {
-        log.Println("Error scanning IPlist: ", err)
+        log.Println("[ERR-6] ", err)
     }
     return false
 }
