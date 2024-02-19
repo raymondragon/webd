@@ -23,12 +23,16 @@ func main() {
         ip, _, err := net.SplitHostPort(r.RemoteAddr)
         if err != nil {
             log.Println("[ERR-1] ", err)
+            http.Error(w, "[ERR-1]", http.StatusInternalServerError)
+            return
         }
         w.Write([]byte(ip+"\n"))
         mute.Lock()
         defer mute.Unlock()
         if _, err := file.WriteString(ip + "\n"); err != nil {
             log.Println("[ERR-2] ", err)
+            http.Error(w, "[ERR-2]", http.StatusInternalServerError)
+            return
         }
     })
     log.Fatal(http.ListenAndServe(*bind, nil))
