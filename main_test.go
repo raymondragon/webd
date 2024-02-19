@@ -18,10 +18,10 @@ func main() {
         log.Fatal("[ERR-0] ", err)
     }
     defer file.Close()
+    var mute sync.Mutex
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
         ip, _, _ := net.SplitHostPort(r.RemoteAddr)
         w.Write([]byte(ip+"\n"))
-        var mute sync.Mutex
         mute.Lock()
         defer mute.Unlock()
         if _, err := file.WriteString(ip + "\n"); err != nil {
