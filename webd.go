@@ -10,14 +10,14 @@ var (
     dirt = flag.String("d", ".", "directory")
     pref = flag.String("p", "/web", "prefix")
 )
+type CustomFileSystem struct {
+    webdav.FileSystem
+}
+func (fs *CustomFileSystem) Delete(name string) error {
+    return webdav.ErrForbidden
+}
 func main() {
     flag.Parse()
-    type CustomFileSystem struct {
-        webdav.FileSystem
-    }
-    func (fs *CustomFileSystem) Delete(name string) error {
-        return webdav.ErrForbidden
-    }
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
         FileSystem: &CustomFileSystem{webdav.Dir(*dirt)},
         Prefix:     *pref,
