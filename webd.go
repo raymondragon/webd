@@ -12,8 +12,14 @@ var (
 )
 func main() {
     flag.Parse()
+    type CustomFileSystem struct {
+        webdav.FileSystem
+    }
+    func (fs *CustomFileSystem) Delete(name string) error {
+        return webdav.ErrForbidden
+    }
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
-        FileSystem: webdav.Dir(*dirt),
+        FileSystem: &CustomFileSystem{webdav.Dir(*dirt)},
         Prefix:     *pref,
         LockSystem: webdav.NewMemLS(),
     }))
