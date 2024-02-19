@@ -10,6 +10,7 @@ import (
 var (
     auth = flag.String("a", "/auth", "")
     bind = flag.String("b", ":8080", "")
+    mute sync.Mutex
 )
 func main() {
     flag.Parse()
@@ -18,7 +19,6 @@ func main() {
         log.Fatal("[ERR-0] ", err)
     }
     defer file.Close()
-    var mute sync.Mutex
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
         ip, _, _ := net.SplitHostPort(r.RemoteAddr)
         w.Write([]byte(ip+"\n"))
