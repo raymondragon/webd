@@ -6,7 +6,7 @@ import (
     "golang.org/x/net/webdav"
 )
 var (
-    bind = flag.String("b", ":90", "bind-to")
+    bind = flag.String("b", ":80", "bind-to")
     dirt = flag.String("d", ".", "directory")
     pref = flag.String("p", "/web", "prefix")
 )
