@@ -8,8 +8,8 @@ import (
     "sync"
 )
 var (
-    auth = flag.String("a", "/auth", "")
-    bind = flag.String("b", ":8080", "")
+    auth = flag.String("a", "/auth", "auth-id")
+    bind = flag.String("b", ":8080", "bind-to")
     mute = sync.Mutex{}
 )
 func main() {
