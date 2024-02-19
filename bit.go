@@ -9,16 +9,16 @@ import (
     "strings"
 )
 var (
-    bin = flag.String("b", ":10000", "")
-    ips = flag.String("i", "IPlist", "")
-    tar = flag.String("t", "", "target")
+    bind = flag.String("b", ":10000", "")
+    ipst = flag.String("i", "IPlist", "")
+    targ = flag.String("t", "", "target")
 )
 func main() {
     flag.Parse()
-    if *tar == "" {
+    if *targ == "" {
         log.Fatal("[ERR-0] Target Service Required")
     }
-    listener, err := net.Listen("tcp", *bin)
+    listener, err := net.Listen("tcp", *bind)
     if err != nil {
         log.Fatal("[ERR-1] ", err)
     }
@@ -35,11 +35,11 @@ func main() {
 func handleClient(clientConn net.Conn) {
     defer clientConn.Close()
     clientIP := clientConn.RemoteAddr().(*net.TCPAddr).IP.String()
-    if !inIPlist(clientIP, *ips) {
+    if !inIPlist(clientIP, *ipst) {
         log.Println("[ERR-3] ", clientIP)
         return
     }
-    serverConn, err := net.Dial("tcp", *tar)
+    serverConn, err := net.Dial("tcp", *targ)
     if err != nil {
         log.Println("[ERR-4] ", err)
         return
