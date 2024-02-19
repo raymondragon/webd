@@ -9,9 +9,9 @@ import (
     "strings"
 )
 var (
-    bin = flag.String("b", ":9000", "local IP:port")
-    ips = flag.String("i", "IPlist", "path to list")
-    tar = flag.String("t", "", "target IP:port")
+    bin = flag.String("b", ":10000", "")
+    ips = flag.String("i", "IPlist", "")
+    tar = flag.String("t", "", "target")
 )
 func main() {
     flag.Parse()
@@ -35,7 +35,7 @@ func main() {
 func handleClient(clientConn net.Conn) {
     defer clientConn.Close()
     clientIP := clientConn.RemoteAddr().(*net.TCPAddr).IP.String()
-    if !isIPInList(clientIP, *ips) {
+    if !inIPlist(clientIP, *ips) {
         log.Println("[ERR-3] ", clientIP)
         return
     }
@@ -48,7 +48,7 @@ func handleClient(clientConn net.Conn) {
     go io.CopyBuffer(serverConn, clientConn, nil)
     io.CopyBuffer(clientConn, serverConn, nil)
 }
-func isIPInList(ip string, iplist string) bool {
+func inIPlist(ip string, iplist string) bool {
     file, err := os.Open(iplist)
     if err != nil {
         log.Println("[ERR-5] ", err)
