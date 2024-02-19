@@ -10,7 +10,7 @@ import (
 var (
     auth = flag.String("a", "/auth", "")
     bind = flag.String("b", ":8080", "")
-    mute sync.Mutex
+    mute = sync.Mutex{}
 )
 func main() {
     flag.Parse()
