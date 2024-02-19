@@ -20,12 +20,15 @@ func main() {
     }
     defer file.Close()
     http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
-        ip, _, _ := net.SplitHostPort(r.RemoteAddr)
+        ip, _, err := net.SplitHostPort(r.RemoteAddr)
+        if err != nil {
+            log.Println("[ERR-1] ", err)
+        }
         w.Write([]byte(ip+"\n"))
         mute.Lock()
         defer mute.Unlock()
         if _, err := file.WriteString(ip + "\n"); err != nil {
-            log.Println("[ERR-1] ", err)
+            log.Println("[ERR-2] ", err)
         }
     })
     log.Fatal(http.ListenAndServe(*bind, nil))
