@@ -10,16 +10,16 @@ var (
     dirt = flag.String("d", ".", "directory")
     pref = flag.String("p", "/web", "prefix")
 )
-type CustomFileSystem struct {
+type norm struct {
     webdav.FileSystem
 }
-func (fs *CustomFileSystem) Delete(name string) error {
+func (fs *norm) RemoveAll(ctx context.Context, name string) error {
     return webdav.ErrForbidden
 }
 func main() {
     flag.Parse()
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
-        FileSystem: &CustomFileSystem{webdav.Dir(*dirt)},
+        FileSystem: &norm{webdav.Dir(*dirt)},
         Prefix:     *pref,
         LockSystem: webdav.NewMemLS(),
     }))
