@@ -6,15 +6,15 @@ import (
     "golang.org/x/net/webdav"
 )
 var (
-    bind = flag.String("b", ":8080", "")
-    cust = flag.String("c", "/webd", "")
-    dirt = flag.String("d", ".", "path")
+    bind = flag.String("b", ":90", "bind-to")
+    dirt = flag.String("d", ".", "directory")
+    pref = flag.String("p", "/web", "prefix")
 )
 func main() {
     flag.Parse()
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
         FileSystem: webdav.Dir(*dirt),
-        Prefix:     *cust,
+        Prefix:     *pref,
         LockSystem: webdav.NewMemLS(),
     }))
 }
