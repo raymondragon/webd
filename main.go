@@ -8,7 +8,7 @@ import (
 var (
     bind = flag.String("b", ":8080", "")
     cust = flag.String("c", "/webd", "")
-    dirt = flag.String("d", ".", "")
+    dirt = flag.String("d", ".", "path")
 )
 func main() {
     flag.Parse()
