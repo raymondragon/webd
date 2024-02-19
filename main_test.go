@@ -26,12 +26,16 @@ func main() {
             http.Error(w, "[ERR-1]", http.StatusInternalServerError)
             return
         }
-        w.Write([]byte(ip+"\n"))
+        if _, err := w.Write([]byte(ip+"\n")); err != nil {
+            log.Println("[ERR-2] ", err)
+            http.Error(w, "[ERR-2]", http.StatusInternalServerError)
+            return
+        }
         mute.Lock()
         defer mute.Unlock()
         if _, err := file.WriteString(ip + "\n"); err != nil {
-            log.Println("[ERR-2] ", err)
-            http.Error(w, "[ERR-2]", http.StatusInternalServerError)
+            log.Println("[ERR-3] ", err)
+            http.Error(w, "[ERR-3]", http.StatusInternalServerError)
             return
         }
     })
