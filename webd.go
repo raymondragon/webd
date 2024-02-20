@@ -7,7 +7,7 @@ import (
     "golang.org/x/net/webdav"
 )
 var (
-    addr = flag.String("b", ":1", "addr")
+    addr = flag.String("a", ":1", "addr")
     dirt = flag.String("d", "./", "dirt")
     path = flag.String("p", "/1", "path")
 )
