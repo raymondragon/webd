@@ -8,8 +8,8 @@ import (
     "sync"
 )
 var (
-    auth = flag.String("a", "/auth", "auth")
-    bind = flag.String("b", ":1000", "bind")
+    addr = flag.String("a", ":1", "addr")
+    path = flag.String("p", "./", "path")
     mute = sync.Mutex{}
 )
 func main() {
@@ -19,7 +19,7 @@ func main() {
         log.Fatal("[ERR-0] ", err)
     }
     defer file.Close()
-    http.HandleFunc(*auth, func(w http.ResponseWriter, r *http.Request) {
+    http.HandleFunc(*path, func(w http.ResponseWriter, r *http.Request) {
         ip, _, err := net.SplitHostPort(r.RemoteAddr)
         if err != nil {
             log.Println("[ERR-1] ", err)
@@ -33,11 +33,11 @@ func main() {
         }
         mute.Lock()
         defer mute.Unlock()
-        if _, err := file.WriteString(ip + "\n"); err != nil {
+        if _, err := file.WriteString(ip+"\n"); err != nil {
             log.Println("[ERR-3] ", err)
             http.Error(w, "[ERR-3]", http.StatusInternalServerError)
             return
         }
     })
-    log.Fatal(http.ListenAndServe(*bind, nil))
+    log.Fatal(http.ListenAndServe(*addr, nil))
 }
