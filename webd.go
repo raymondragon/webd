@@ -7,7 +7,7 @@ import (
     "golang.org/x/net/webdav"
 )
 var (
-    bind = flag.String("b", ":80", "bind-to")
+    bind = flag.String("b", ":10000", "bind")
     dirt = flag.String("d", ".", "directory")
     pref = flag.String("p", "/web", "prefix")
 )
@@ -19,7 +19,7 @@ func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
 }
 func main() {
     flag.Parse()
-    log.Printf("[SERVE] %v%v\n", *bind, *pref)
+    log.Printf("[SERVE] %v%v \n", *bind, *pref)
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
         FileSystem: &noRemoval{webdav.Dir(*dirt)},
         Prefix:     *pref,
