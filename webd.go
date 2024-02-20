@@ -15,10 +15,11 @@ type noRemoval struct {
     webdav.FileSystem
 }
 func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
-    return webdav.ErrForbidden
+    return nil
 }
 func main() {
     flag.Parse()
+    log.Printf("[LISTEN] %v%v [DIRECTORY] %v\n", *bind, *dirt, *pref)
     log.Fatal(http.ListenAndServe(*bind, &webdav.Handler{
         FileSystem: &noRemoval{webdav.Dir(*dirt)},
         Prefix:     *pref,
