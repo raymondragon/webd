@@ -9,9 +9,9 @@ import (
     "strings"
 )
 var (
-    bind = flag.String("b", ":10000", "bind-to")
-    ipst = flag.String("i", "IPlist", "ip-list")
-    tars = flag.String("t", "", "target-server")
+    bind = flag.String("b", ":10000", "bind")
+    ipst = flag.String("i", "IPlist", "iplist")
+    tars = flag.String("t", "", "target")
 )
 func main() {
     flag.Parse()
