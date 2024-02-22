@@ -19,7 +19,7 @@ func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
 }
 func main() {
     flag.Parse()
-    log.Printf("[LISTEN] %v%v [SERVE] %v\n", *addr, *path, *dirt)
+    log.Printf("[LISTEN] %v%v [SERVE] %v", *addr, *path, *dirt)
     log.Fatal(http.ListenAndServe(*addr, &webdav.Handler{
         FileSystem: &noRemoval{webdav.Dir(*dirt)},
         Prefix:     *path,
