@@ -1,6 +1,5 @@
 package main
 import (
-    "context"
     "flag"
     "log"
     "net/http"
@@ -9,18 +8,12 @@ import (
 var (
     addr = flag.String("a", ":1", "addr")
     dirt = flag.String("d", "./", "dirt")
-    path = flag.String("p", "/1", "path")
+    path = flag.String("p", "/x", "path")
 )
-type noRemoval struct {
-    webdav.FileSystem
-}
-func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
-    return webdav.ErrForbidden
-}
 func main() {
     flag.Parse()
     webd := &webdav.Handler{
-        FileSystem: &noRemoval{webdav.Dir(*dirt)},
+        FileSystem: webdav.Dir(*dirt),
         Prefix:     *path,
         LockSystem: webdav.NewMemLS(),
     }
