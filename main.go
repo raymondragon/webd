@@ -19,10 +19,13 @@ func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
 }
 func main() {
     flag.Parse()
-    log.Printf("[LISTEN] %v%v [SERVE] %v", *addr, *path, *dirt)
-    log.Fatal(http.ListenAndServe(*addr, &webdav.Handler{
+    webd := &webdav.Handler{
         FileSystem: &noRemoval{webdav.Dir(*dirt)},
         Prefix:     *path,
         LockSystem: webdav.NewMemLS(),
-    }))
+    }
+    log.Printf("[LISTEN] %v%v [SERVE] %v", *addr, *path, *dirt)
+    if err := http.ListenAndServe(*addr, webd); err != nil {
+        log.Fatalf("[ERR-0] %v", err)
+    }
 }
