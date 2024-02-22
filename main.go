@@ -15,7 +15,7 @@ type noRemoval struct {
     webdav.FileSystem
 }
 func (fs *noRemoval) RemoveAll(ctx context.Context, name string) error {
-    return nil
+    return webdav.ErrForbidden
 }
 func main() {
     flag.Parse()
