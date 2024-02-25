@@ -42,8 +42,6 @@ func main() {
         log.Fatalf("[ERR-1] %v", err)
     }
 }
-
-
 func generateCert() (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
     if err != nil {
@@ -54,12 +52,12 @@ func generateCert() (tls.Certificate, error) {
         return tls.Certificate{}, err
     }
     template := x509.Certificate{
-        SerialNumber: serialNumber,
-        Subject: pkix.Name{Organization: []string{"webd"},},
-        NotBefore: time.Now(),
-        NotAfter: time.Now().Add(10*365*24*time.Hour),
-        KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-        ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+        SerialNumber:          serialNumber,
+        Subject:               pkix.Name{Organization: []string{"webd"},},
+        NotBefore:             time.Now(),
+        NotAfter:              time.Now().Add(10*365*24*time.Hour),
+        KeyUsage:              x509.KeyUsageKeyEncipherment|x509.KeyUsageDigitalSignature,
+        ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
         BasicConstraintsValid: true,
     }
     crtDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
