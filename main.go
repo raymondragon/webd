@@ -22,7 +22,7 @@ func main() {
     flag.Parse()
     cert, err := generateCert()
     if err != nil {
-        log.Fatalf("[ERR-0] %v", err)
+        log.Fatalf("[ERR-00] %v", err)
     }
     serv := &http.Server{
         Addr:      *addr,
@@ -31,13 +31,13 @@ func main() {
             Prefix:     *path,
             LockSystem: webdav.NewMemLS(),
         },
-        TLSConfig: tls.Config{
+        TLSConfig: &tls.Config{
             Certificates: []tls.Certificate{cert},
         },
     }
     log.Printf("[LISTEN] %v%v [SERVE] %v", *addr, *path, *dirt)
     if err := serv.ListenAndServeTLS("", ""); err != nil {
-        log.Fatalf("[ERR-1] %v", err)
+        log.Fatalf("[ERR-01] %v", err)
     }
 }
 func generateCert() (tls.Certificate, error) {
