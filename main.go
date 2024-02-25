@@ -16,9 +16,9 @@ import (
 var (
     add = flag.String("add", ":8443", "Server address")
     dir = flag.String("dir", "./", "Working directory")
+    nts = flag.Bool("notls", false, "Disable TLS mode")
     org = flag.String("org", "ORG", "Orgnization name")
-    pre = flag.String("pre", "/webd", "Webdav prefix")
-    tls = flag.Bool("tls", false, "Enable TLS webdav")
+    pre = flag.String("pre", "/hello", "Webdav prefix")
 )
 func main() {
     flag.Parse()
@@ -27,7 +27,7 @@ func main() {
         Prefix:     *pre,
         LockSystem: webdav.NewMemLS(),
     }
-    if !tls {
+    if *nts {
         log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] OFF", *add, *pre, *dir)
         if err := http.ListenAndServe(*add, webd); err != nil {
             log.Fatalf("[ERR-00] %v", err)
@@ -49,7 +49,7 @@ func main() {
         log.Fatalf("[ERR-02] %v", err)
     }
 }
-func generateCert(name String) (tls.Certificate, error) {
+func generateCert(name string) (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
     if err != nil {
         return tls.Certificate{}, err
