@@ -56,9 +56,9 @@ func generateCert() (tls.Certificate, error) {
         Subject:               pkix.Name{Organization: []string{"webd"},},
         NotBefore:             time.Now(),
         NotAfter:              time.Now().Add(10*365*24*time.Hour),
-        KeyUsage:              x509.KeyUsageKeyEncipherment|x509.KeyUsageDigitalSignature,
+        KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
         ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-        BasicConstraintsValid: true,
+        //BasicConstraintsValid: true,
     }
     crtDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
     if err != nil {
