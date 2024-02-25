@@ -14,33 +14,42 @@ import (
     "golang.org/x/net/webdav"
 )
 var (
-    addr = flag.String("a", ":1", "addr")
-    dirt = flag.String("d", "./", "dirt")
-    path = flag.String("p", "/x", "path")
+    add = flag.String("add", ":8443", "Server address")
+    dir = flag.String("dir", "./", "Working directory")
+    org = flag.String("org", "ORG", "Orgnization name")
+    pre = flag.String("pre", "/webd", "Webdav prefix")
+    tls = flag.Bool("tls", false, "Enable TLS webdav")
 )
 func main() {
     flag.Parse()
-    cert, err := generateCert()
+    webd := &webdav.Handler{
+        FileSystem: webdav.Dir(*dir),
+        Prefix:     *pre,
+        LockSystem: webdav.NewMemLS(),
+    }
+    if !tls {
+        log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] OFF", *add, *pre, *dir)
+        if err := http.ListenAndServe(*add, webd); err != nil {
+            log.Fatalf("[ERR-00] %v", err)
+        }
+    }
+    cert, err := generateCert(*org)
     if err != nil {
-        log.Fatalf("[ERR-00] %v", err)
+        log.Fatalf("[ERR-01] %v", err)
     }
     serv := &http.Server{
-        Addr:      *addr,
-        Handler:   &webdav.Handler{
-            FileSystem: webdav.Dir(*dirt),
-            Prefix:     *path,
-            LockSystem: webdav.NewMemLS(),
-        },
+        Addr:      *add,
+        Handler:   webd,
         TLSConfig: &tls.Config{
             Certificates: []tls.Certificate{cert},
         },
     }
-    log.Printf("[LISTEN] %v%v [SERVE] %v", *addr, *path, *dirt)
+    log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] ON", *add, *pre, *dir)
     if err := serv.ListenAndServeTLS("", ""); err != nil {
-        log.Fatalf("[ERR-01] %v", err)
+        log.Fatalf("[ERR-02] %v", err)
     }
 }
-func generateCert() (tls.Certificate, error) {
+func generateCert(name String) (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
     if err != nil {
         return tls.Certificate{}, err
@@ -52,7 +61,7 @@ func generateCert() (tls.Certificate, error) {
     template := x509.Certificate{
         SerialNumber: serialNumber,
         Subject:      pkix.Name{
-                          Organization: []string{"webd"},
+                          Organization: []string{name},
                       },
         NotBefore:    time.Now(),
         NotAfter:     time.Now().Add(10*365*24*time.Hour),
