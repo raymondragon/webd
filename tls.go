@@ -55,23 +55,18 @@ func generateCert() (tls.Certificate, error) {
     }
     template := x509.Certificate{
         SerialNumber: serialNumber,
-        Subject: pkix.Name{
-            Organization: []string{"Self-signed"},
-        },
-        NotBefore:             time.Now(),
-        NotAfter:              time.Now().Add(365*10*24*time.Hour),
-        KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-        ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+        Subject: pkix.Name{Organization: []string{"webd"},},
+        NotBefore: time.Now(),
+        NotAfter: time.Now().Add(10*365*24*time.Hour),
+        KeyUsage: x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+        ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
         BasicConstraintsValid: true,
     }
-    certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
+    crtDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
     if err != nil {
         return tls.Certificate{}, err
     }
-
-    certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
-    keyDER := x509.MarshalPKCS1PrivateKey(priv)
-    keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: keyDER})
-
-    return tls.X509KeyPair(certPEM, keyPEM)
+    crtPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+    keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
+    return tls.X509KeyPair(crtPEM, keyPEM)
 }
