@@ -64,7 +64,7 @@ func generateCert() (tls.Certificate, error) {
     if err != nil {
         return tls.Certificate{}, err
     }
-    crtPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
+    crtPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: crtDER})
     keyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
     return tls.X509KeyPair(crtPEM, keyPEM)
 }
