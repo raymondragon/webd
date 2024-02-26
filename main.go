@@ -16,7 +16,7 @@ import (
 var (
     add = flag.String("add", ":8443", "Server address")
     dir = flag.String("dir", "./", "Working directory")
-    nts = flag.Bool("notls", false, "Disable TLS mode")
+    not = flag.Bool("notls", false, "Disable TLS mode")
     org = flag.String("org", "ORG", "Orgnization name")
     pre = flag.String("pre", "/hello", "Webdav prefix")
 )
@@ -27,7 +27,7 @@ func main() {
         Prefix:     *pre,
         LockSystem: webdav.NewMemLS(),
     }
-    if *nts {
+    if *not {
         log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] OFF", *add, *pre, *dir)
         if err := http.ListenAndServe(*add, webd); err != nil {
             log.Fatalf("[ERR-00] %v", err)
@@ -49,7 +49,7 @@ func main() {
         log.Fatalf("[ERR-02] %v", err)
     }
 }
-func generateCert(name string) (tls.Certificate, error) {
+func generateCert(orgName string) (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
     if err != nil {
         return tls.Certificate{}, err
@@ -61,7 +61,7 @@ func generateCert(name string) (tls.Certificate, error) {
     template := x509.Certificate{
         SerialNumber: serialNumber,
         Subject:      pkix.Name{
-                          Organization: []string{name},
+                          Organization: []string{orgName},
                       },
         NotBefore:    time.Now(),
         NotAfter:     time.Now().Add(10*365*24*time.Hour),
