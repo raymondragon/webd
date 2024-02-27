@@ -60,13 +60,13 @@ func generateCert(orgName string) (tls.Certificate, error) {
     }
     template := x509.Certificate{
         SerialNumber: serialNumber,
-        Subject: pkix.Name{
+        Subject:      pkix.Name{
             Organization: []string{orgName},
         },
-        NotBefore:   time.Now(),
-        NotAfter:    time.Now().Add(10 * 365 * 24 * time.Hour),
-        KeyUsage:    x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
-        ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+        NotBefore:    time.Now(),
+        NotAfter:     time.Now().Add(10 * 365 * 24 * time.Hour),
+        KeyUsage:     x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
+        ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
     }
     crtDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &priv.PublicKey, priv)
     if err != nil {
