@@ -49,7 +49,7 @@ func main() {
             log.Fatalf("[ERRO-2] %v", err)
         }
         serv := &http.Server{
-            Addr:      parsedURL.Hostname +":"+parsedURL.Port,
+            Addr:      parsedURL.Hostname+":"+parsedURL.Port,
             Handler:   webd,
             TLSConfig: &tls.Config{
                 Certificates: []tls.Certificate{cert},
