@@ -10,44 +10,71 @@ import (
     "log"
     "math/big"
     "net/http"
+    "net/url"
     "time"
     "golang.org/x/net/webdav"
 )
-var (
-    add = flag.String("add", ":8443", "Server address")
-    dir = flag.String("dir", "./", "Working directory")
-    not = flag.Bool("notls", false, "Disable TLS mode")
-    org = flag.String("org", "ORG", "Orgnization name")
-    pre = flag.String("pre", "/hello", "Webdav prefix")
-)
+var rawURL = flag.String("url", "", "")
+type ParsedURL struct {
+    Scheme   string
+    Hostname string
+    Port     string
+    Path     string
+    Fragment string
+}
 func main() {
     flag.Parse()
+    parsedURL, err := urlParse(*rawURL)
+    if err != nil {
+        log.Fatalf("[ERRO-0 ] %v", err)
+    }
     webd := &webdav.Handler{
-        FileSystem: webdav.Dir(*dir),
-        Prefix:     *pre,
+        FileSystem: webdav.Dir(parsedURL.Fragment),
+        Prefix:     parsedURL.Path,
         LockSystem: webdav.NewMemLS(),
     }
-    if *not {
-        log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] OFF", *add, *pre, *dir)
-        if err := http.ListenAndServe(*add, webd); err != nil {
-            log.Fatalf("[ERR-00] %v", err)
+    switch parsedURL.Scheme {
+    case "http":
+        log.Printf("[INFO-0] %v", *rawURL)
+        if err := http.ListenAndServe(parsedURL.Hostname+":"+parsedURL.Port, webd); err != nil {
+            log.Fatalf("[ERRO-1] %v", err)
         }
+    case "https":
+        orgName := parsedURL.Hostname
+        if orgName == "" {
+            orgName = "GlobalCert"
+        }
+        cert, err := generateCert(orgName)
+        if err != nil {
+            log.Fatalf("[ERRO-2] %v", err)
+        }
+        serv := &http.Server{
+            Addr:      parsedURL.Hostname +":"+parsedURL.Port,
+            Handler:   webd,
+            TLSConfig: &tls.Config{
+                Certificates: []tls.Certificate{cert},
+            },
+        }
+        log.Printf("[INFO-1] %v", *rawURL)
+        if err := serv.ListenAndServeTLS("", ""); err != nil {
+            log.Fatalf("[ERRO-3] %v", err)
+        }
+    default:
+        log.Fatalf("[ERRO-4] %v", "Scheme Not Supported")
     }
-    cert, err := generateCert(*org)
+}
+func urlParse(rawURL string) (ParsedURL, error) {
+    u, err := url.Parse(rawURL)
     if err != nil {
-        log.Fatalf("[ERR-01] %v", err)
+        return ParsedURL{}, err
     }
-    serv := &http.Server{
-        Addr:      *add,
-        Handler:   webd,
-        TLSConfig: &tls.Config{
-            Certificates: []tls.Certificate{cert},
-        },
-    }
-    log.Printf("[LISTEN] %v%v [SERVE] %v [TLS] ON", *add, *pre, *dir)
-    if err := serv.ListenAndServeTLS("", ""); err != nil {
-        log.Fatalf("[ERR-02] %v", err)
-    }
+    return ParsedURL{
+        Scheme:   u.Scheme,
+        Hostname: u.Hostname(),
+        Port:     u.Port(),
+        Path:     u.Path,
+        Fragment: u.Fragment,
+    }, nil
 }
 func generateCert(orgName string) (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
