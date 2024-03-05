@@ -40,11 +40,7 @@ func main() {
             log.Fatalf("[ERRO-1] %v", err)
         }
     case "https":
-        orgName := parsedURL.Hostname
-        if orgName == "" {
-            orgName = "GlobalCert"
-        }
-        cert, err := generateCert(orgName)
+        cert, err := generateCert(parsedURL.Hostname)
         if err != nil {
             log.Fatalf("[ERRO-2] %v", err)
         }
