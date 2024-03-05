@@ -30,7 +30,7 @@ func main() {
     flag.Parse()
     parsedURL, err := urlParse(*rawURL)
     if err != nil {
-        log.Fatalf("[ERRO-0 ] %v", err)
+        log.Fatalf("[ERRO-0] %v", err)
     }
     webd := &webdav.Handler{
         FileSystem: webdav.Dir(parsedURL.Fragment),
