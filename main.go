@@ -1,4 +1,5 @@
 package main
+
 import (
     "crypto/rand"
     "crypto/rsa"
@@ -14,7 +15,9 @@ import (
     "time"
     "golang.org/x/net/webdav"
 )
+
 var rawURL = flag.String("url", "", "")
+
 type ParsedURL struct {
     Scheme   string
     Hostname string
@@ -22,6 +25,7 @@ type ParsedURL struct {
     Path     string
     Fragment string
 }
+
 func main() {
     flag.Parse()
     parsedURL, err := urlParse(*rawURL)
@@ -59,6 +63,7 @@ func main() {
         log.Fatalf("[ERRO-4] %v", "Scheme Not Supported")
     }
 }
+
 func urlParse(rawURL string) (ParsedURL, error) {
     u, err := url.Parse(rawURL)
     if err != nil {
@@ -72,6 +77,7 @@ func urlParse(rawURL string) (ParsedURL, error) {
         Fragment: u.Fragment,
     }, nil
 }
+
 func generateCert(orgName string) (tls.Certificate, error) {
     priv, err := rsa.GenerateKey(rand.Reader, 2048)
     if err != nil {
