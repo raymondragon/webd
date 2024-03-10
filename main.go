@@ -32,6 +32,9 @@ func main() {
     if err != nil {
         log.Fatalf("[ERRO-0] %v", err)
     }
+    if parsedURL.Fragment == "" {
+        parsedURL.Fragment = "."
+    }
     webd := &webdav.Handler{
         FileSystem: webdav.Dir(parsedURL.Fragment),
         Prefix:     parsedURL.Path,
