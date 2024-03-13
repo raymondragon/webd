@@ -11,7 +11,7 @@ var rawURL = flag.String("url", "", "http(s)://host:port/path#directory")
 
 func main() {
     flag.Parse()
-    parsedURL, err := golib.UrlParse(*rawURL)
+    parsedURL, err := golib.URLParse(*rawURL)
     if err != nil {
         log.Printf("[WARN] %v", err)
     }
