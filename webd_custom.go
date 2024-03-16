@@ -3,7 +3,6 @@ package main
 import (
     "flag"
     "log"
-    "os"
 
     "github.com/raymondragon/golib"
 )
@@ -14,7 +13,7 @@ func main() {
     flag.Parse()
     if *rawURL == nil {
         flag.Usage()
-        os.Exit(1)
+        log.Fatalf("[ERRO] %v", "Flag Missing")
     }
     parsedURL, err := golib.URLParse(*rawURL)
     if err != nil {
