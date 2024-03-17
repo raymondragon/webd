@@ -13,7 +13,7 @@ func main() {
     flag.Parse()
     if *rawURL == nil {
         flag.Usage()
-        log.Fatalf("[ERRO] %v", "Flag Missing")
+        log.Fatalf("[ERRO] %v", "Invalid Flag")
     }
     parsedURL, err := golib.URLParse(*rawURL)
     if err != nil {
@@ -40,6 +40,6 @@ func main() {
             log.Fatalf("[ERRO] %v", err)
         }
     default:
-        log.Fatalf("[ERRO] %v", parsedURL.Scheme)
+        log.Fatalf("[ERRO] Invalid Scheme: %v", parsedURL.Scheme)
     }
 }
