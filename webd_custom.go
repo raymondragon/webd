@@ -13,20 +13,15 @@ func main() {
     flag.Parse()
     if *rawURL == nil {
         flag.Usage()
-        log.Fatalf("[ERRO] %v", "Flag Missing")
+        log.Fatalf("[ERRO] %v", "Invalid Flag")
     }
     parsedURL, err := golib.URLParse(*rawURL)
     if err != nil {
         log.Printf("[WARN] %v", err)
     }
     webdavHandler := golib.WebdavHandler(parsedURL.Fragment, parsedURL.Path)
-    switch parsedURL.Scheme {
-    case "http":
-        log.Printf("[INFO] %v", *rawURL)
-        if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, webdavHandler); err != nil {
-            log.Fatalf("[ERRO] %v", err)
-        }
-    default:
-        log.Fatalf("[ERRO] %v", parsedURL.Scheme)
+    log.Printf("[INFO] %v", *rawURL)
+    if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, webdavHandler); err != nil {
+        log.Fatalf("[ERRO] %v", err)
     }
 }
