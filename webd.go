@@ -3,9 +3,7 @@ package main
 import (
     "flag"
     "log"
-    "net/http"
 
-    "golang.org/x/net/webdav"
     "github.com/raymondragon/golib"
 )
 
@@ -21,12 +19,9 @@ func main() {
     if err != nil {
         log.Printf("[WARN] %v", err)
     }
-    http.Handle(parsedURL.Path, &webdav.Handler{
-        FileSystem: webdav.Dir(parsedURL.Fragment),
-        LockSystem: webdav.NewMemLS(),
-    })
+    webdavHandler := golib.WebdavHandler(parsedURL.Fragment, parsedURL.Path)
     log.Printf("[INFO] %v", *rawURL)
-    if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, nil); err != nil {
+    if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, webdavHandler); err != nil {
         log.Fatalf("[ERRO] %v", err)
     }
 }
