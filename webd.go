@@ -5,11 +5,11 @@ import (
     "log"
     "net/http"
 
-    "golang/x/webdav"
+    "golang.org/x/net/webdav"
     "github.com/raymondragon/golib"
 )
 
-var rawURL = flag.String("url", "", "http(s)://host:port/path#dir")
+var rawURL = flag.String("url", "", "http://host:port/path#dir")
 
 func main() {
     flag.Parse()
