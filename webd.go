@@ -3,7 +3,10 @@ package main
 import (
     "flag"
     "log"
+    "net"
+    "net/http"
 
+    "golang/x/webdav"
     "github.com/raymondragon/golib"
 )
 
@@ -19,27 +22,12 @@ func main() {
     if err != nil {
         log.Printf("[WARN] %v", err)
     }
-    webdavHandler := golib.WebdavHandler(parsedURL.Fragment, parsedURL.Path)
-    switch parsedURL.Scheme {
-    case "http":
-        log.Printf("[INFO] %v", *rawURL)
-        if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, webdavHandler); err != nil {
-            log.Fatalf("[ERRO] %v", err)
-        }
-    case "https":
-        tlsConfig, err := golib.TLSConfigApplication(parsedURL.Hostname)
-        if err != nil {
-            log.Printf("[WARN] %v", err)
-            tlsConfig, err = golib.TLSConfigGeneration(parsedURL.Hostname)
-            if err != nil {
-                log.Printf("[WARN] %v", err)
-            }
-        }
-        log.Printf("[INFO] %v", *rawURL)
-        if err := golib.ServeHTTPS(parsedURL.Hostname, parsedURL.Port, webdavHandler, tlsConfig); err != nil {
-            log.Fatalf("[ERRO] %v", err)
-        }
-    default:
-        log.Fatalf("[ERRO] Invalid Scheme: %v", parsedURL.Scheme)
+    http.Handle(parsedURL.Path, &webdav.Handler{
+        FileSystem: webdav.Dir(parsedURL.Fragment),
+        LockSystem: webdav.NewMemLS(),
+    })
+    log.Printf("[INFO] %v", *rawURL)
+    if err := http.ListenAndServe(net.JoinHostPort(parsedURL.Hostname, parsedURL.Port), nil); err != nil {
+        log.Fatalf("[ERRO] %v", err)
     }
 }
