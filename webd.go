@@ -3,7 +3,6 @@ package main
 import (
     "flag"
     "log"
-    "net"
     "net/http"
 
     "golang/x/webdav"
@@ -27,7 +26,7 @@ func main() {
         LockSystem: webdav.NewMemLS(),
     })
     log.Printf("[INFO] %v", *rawURL)
-    if err := http.ListenAndServe(net.JoinHostPort(parsedURL.Hostname, parsedURL.Port), nil); err != nil {
+    if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, nil); err != nil {
         log.Fatalf("[ERRO] %v", err)
     }
 }
