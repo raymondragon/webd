@@ -3,11 +3,12 @@ package main
 import (
     "flag"
     "log"
+    "net/url"
 
     "github.com/raymondragon/golib"
 )
 
-var rawURL = flag.String("url", "", "http://host:port/path#dir")
+var rawURL = flag.String("url", "", "http://name:port/path#dir")
 
 func main() {
     flag.Parse()
@@ -15,13 +16,13 @@ func main() {
         flag.Usage()
         log.Fatalf("[ERRO] %v", "Invalid Flag")
     }
-    parsedURL, err := golib.URLParse(*rawURL)
+    parsedURL, err := url.Parse(*rawURL)
     if err != nil {
         log.Printf("[WARN] %v", err)
     }
     webdavHandler := golib.WebdavHandler(parsedURL.Fragment, parsedURL.Path)
     log.Printf("[INFO] %v", *rawURL)
-    if err := golib.ServeHTTP(parsedURL.Hostname, parsedURL.Port, webdavHandler); err != nil {
+    if err := golib.ServeHTTP(parsedURL.Host, webdavHandler); err != nil {
         log.Fatalf("[ERRO] %v", err)
     }
 }
