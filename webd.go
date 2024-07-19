@@ -8,7 +8,7 @@ import (
     "github.com/raymondragon/golib"
 )
 
-var rawURL = flag.String("url", "", "http://name:port/path#dir")
+var rawURL = flag.String("u", "", "http://name:port/path#dir")
 
 func main() {
     flag.Parse()
